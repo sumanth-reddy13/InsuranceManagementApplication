@@ -2,6 +2,7 @@ package com.Fintech.InsurancePolicy.Models;
 
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,19 +15,23 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String address;
     private String contactInfo;
 
-    //Client and Insurance policy have OneToMany relationship
+    // Client and Insurance policy have OneToMany relationship
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<InsurancePolicy> policies = new ArrayList<>();
+
+    // Client and Claim have OneToMany Relationship.
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Claim> claimList = new ArrayList<>();
 
     public Client() {
 
     }
 
-    public Client(int id, String name, Date dateOfBirth, String address, String contactInfo) {
+    public Client(int id, String name, LocalDate dateOfBirth, String address, String contactInfo) {
         this.id = id;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
@@ -55,10 +60,10 @@ public class Client {
     public void setName(String name) {
         this.name = name;
     }
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
     public String getAddress() {
@@ -72,5 +77,13 @@ public class Client {
     }
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
+    }
+
+    public List<Claim> getClaimList() {
+        return claimList;
+    }
+
+    public void setClaimList(List<Claim> claimList) {
+        this.claimList = claimList;
     }
 }

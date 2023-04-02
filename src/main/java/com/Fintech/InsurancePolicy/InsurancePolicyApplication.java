@@ -7,5 +7,4 @@ public class InsurancePolicyApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(InsurancePolicyApplication.class, args);
 	}
-
 }

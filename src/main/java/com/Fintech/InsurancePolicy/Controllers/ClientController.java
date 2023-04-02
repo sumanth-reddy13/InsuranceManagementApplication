@@ -1,10 +1,15 @@
 package com.Fintech.InsurancePolicy.Controllers;
 
 import com.Fintech.InsurancePolicy.Models.Client;
+import com.Fintech.InsurancePolicy.ResponseDto.GetAllClientsResponseDto;
 import com.Fintech.InsurancePolicy.Services.ClientService;
+import com.Fintech.InsurancePolicy.UpdateDTOs.UpdateClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.PersistenceUnit;
 import java.util.List;
 
 @RestController
@@ -16,37 +21,60 @@ public class ClientController {
 
     //API for adding client
     @PostMapping("/clients")
-    public String addClient(@RequestBody Client client){
+    public ResponseEntity<String> addClient(@RequestBody Client client){
+        String response = "";
         try {
-            return clientService.addClient(client);
-        }catch (Exception e){
-            String response = "client not added";
-            return response;
+            response =  clientService.addClient(client);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }catch (Exception e) {
+            response = "client not added";
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
     // API to fetch specific client by id
     @GetMapping("/clients/{id}")
-    public Client getClientById(@PathVariable int id){
-        return clientService.getClientById(id);
+    public ResponseEntity<GetAllClientsResponseDto> getClientById(@PathVariable int id)  {
+        try {
+            GetAllClientsResponseDto clientsResponseDto = clientService.getClientById(id);
+            return new ResponseEntity<>(clientsResponseDto, HttpStatus.ACCEPTED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
-
 
     @GetMapping("/get_all_clients")
     //API to fetch all clients
-    public List<Client> getAllClients(){
-        return clientService.getAllClients();
+    public ResponseEntity<List<GetAllClientsResponseDto>> getAllClients(){
+        List<GetAllClientsResponseDto> list = clientService.getAllClients();
+        return new ResponseEntity<>(list, HttpStatus.ACCEPTED);
     }
 
     //API to delete a client
 
     @DeleteMapping("/clients/{id}")
-    public String deleteClient(@PathVariable int id) {
+    public ResponseEntity<String> deleteClient(@PathVariable int id) {
+        String response = "";
         try {
-            return clientService.deleteClient(id);
+            response = clientService.deleteClient(id);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         } catch (Exception e) {
-            String response = "Client is not deleted";
-            return response;
+            response = "Client is not deleted";
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
+    // Write API to update Client's Information.
+    @PutMapping("/updateClient")
+    public ResponseEntity<String> updateClient(@RequestBody UpdateClient updateClient) {
+        try {
+            String response = clientService.updateClient(updateClient);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

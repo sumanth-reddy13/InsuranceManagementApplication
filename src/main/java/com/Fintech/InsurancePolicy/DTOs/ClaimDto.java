@@ -1,16 +1,20 @@
 package com.Fintech.InsurancePolicy.DTOs;
 
-import java.time.LocalDate;
+import com.Fintech.InsurancePolicy.Enums.PolicyType;
 
 public class ClaimDto {
 
     private int policyId;
-    private String claimNumber;
-    private String description;
-    private LocalDate claimDate;
-    private String claimStatus;
+    private int clientId;
+//    private String policyType;
 
     public ClaimDto() {
+    }
+
+    public ClaimDto(int policyId, int clientId, String policyType) {
+        this.policyId = policyId;
+        this.clientId = clientId;
+//        this.policyType = policyType;
     }
 
     public int getPolicyId() {
@@ -20,36 +24,20 @@ public class ClaimDto {
     public void setPolicyId(int policyId) {
         this.policyId = policyId;
     }
-
-    public String getClaimNumber() {
-        return claimNumber;
+//
+    public int getClientId() {
+        return clientId;
     }
 
-    public void setClaimNumber(String claimNumber) {
-        this.claimNumber = claimNumber;
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getClaimDate() {
-        return claimDate;
-    }
-
-    public void setClaimDate(LocalDate claimDate) {
-        this.claimDate = claimDate;
-    }
-
-    public String getClaimStatus() {
-        return claimStatus;
-    }
-
-    public void setClaimStatus(String claimStatus) {
-        this.claimStatus = claimStatus;
-    }
+//
+//    public void setPolicyType(String policyType) {
+//        this.policyType = policyType;
+//    }
+//
+//    public String getPolicyType() {
+//        return this.policyType;
+//    }
 }

@@ -21,6 +21,7 @@ public class InsurancePolicy {
     private double premium;
     private LocalDate startDate;
     private LocalDate endDate;
+    private boolean isPolicyClaimed;
 
 
     //relation between insurance and client policy is ManyToOne Relationship.
@@ -37,7 +38,7 @@ public class InsurancePolicy {
 
     //parameterised constructor
 
-    public InsurancePolicy(int id, String policyNumber, PolicyType type, double coverage_amount, double premium, LocalDate startDate, LocalDate endDate) {
+    public InsurancePolicy(int id, String policyNumber, boolean isClaimed, PolicyType type, double coverage_amount, double premium, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.policyNumber = policyNumber;
         this.type = type;
@@ -45,6 +46,7 @@ public class InsurancePolicy {
         this.premium = premium;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.isPolicyClaimed = isClaimed;
     }
 
     //getters and setters
@@ -119,5 +121,13 @@ public class InsurancePolicy {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public boolean isPolicyClaimed() {
+        return isPolicyClaimed;
+    }
+
+    public void setPolicyClaimed(boolean bool) {
+        this.isPolicyClaimed = bool;
     }
 }

@@ -1,7 +1,9 @@
 package com.Fintech.InsurancePolicy.Controllers;
 import com.Fintech.InsurancePolicy.DTOs.ClaimDto;
 import com.Fintech.InsurancePolicy.Models.Claim;
+import com.Fintech.InsurancePolicy.ResponseDto.ClaimResponseDto;
 import com.Fintech.InsurancePolicy.Services.ClaimService;
+import com.Fintech.InsurancePolicy.UpdateDTOs.ClaimUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,34 +18,52 @@ public class ClaimController {
     ClaimService claimService;
 
     @PostMapping("/claims")
-    public ResponseEntity<String> addClaim(@RequestBody ClaimDto claimDto){
+    public ResponseEntity<String> claimPolicy(@RequestBody ClaimDto claimDto){
         try {
             String response = claimService.addClaim(claimDto);
             return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }catch (Exception e){
-            String result = "Insurance not claimed.";
+            String result = e.getLocalizedMessage();
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/claims/{id}")
-    public Claim getClaimById(@PathVariable int id){
-
-        return claimService.getClaimById(id);
+    public ResponseEntity<ClaimResponseDto> getClaimById(@PathVariable int id){
+        try {
+            ClaimResponseDto claimResponseDto = claimService.getClaimById(id);
+            return new ResponseEntity<>(claimResponseDto, HttpStatus.FOUND);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/get_all_claims")
-    public List<Claim> getAllClaims(){
-        return claimService.getAllClaims();
+    public ResponseEntity<List<ClaimResponseDto>> getAllClaims(){
+        List<ClaimResponseDto> list =  claimService.getAllClaims();
+        return new ResponseEntity<>(list, HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/claims/{id}")
-    public String deleteClaim(@PathVariable int id){
+    public ResponseEntity<String> deleteClaim(@PathVariable int id){
+        String response = "";
         try{
-            return claimService.deleteClaim(id);
+            response =  claimService.deleteClaim(id);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
         }catch (Exception e){
-            String response = "Unfortunately, Your Claim is not deleted!";
-            return response;
+            response = "Requested Claim is not present!!";
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("updateClaim")
+    public ResponseEntity<String> updateClaim(@RequestBody ClaimUpdateDto claimUpdateDto) {
+        try {
+            return new ResponseEntity<>(claimService.updateClaim(claimUpdateDto), HttpStatus.ACCEPTED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }
