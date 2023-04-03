@@ -1,4 +1,4 @@
-package com.Fintech.InsurancePolicy.DTOs;
+package com.Fintech.InsurancePolicy.RequestDTOs;
 
 import com.Fintech.InsurancePolicy.Enums.PolicyType;
 

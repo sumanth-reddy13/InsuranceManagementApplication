@@ -1,13 +1,12 @@
 package com.Fintech.InsurancePolicy.Services;
 
-import com.Fintech.InsurancePolicy.DTOs.InsurancePolicyRequestDto;
+import com.Fintech.InsurancePolicy.RequestDTOs.InsurancePolicyRequestDto;
 import com.Fintech.InsurancePolicy.Models.Client;
 import com.Fintech.InsurancePolicy.Models.InsurancePolicy;
 import com.Fintech.InsurancePolicy.Repositories.ClientRepository;
 import com.Fintech.InsurancePolicy.Repositories.InsurancePolicyRepository;
 import com.Fintech.InsurancePolicy.ResponseDto.PolicyResponseDto;
 import com.Fintech.InsurancePolicy.UpdateDTOs.UpdatePolicyDto;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class InsurancePolicyService {
     @Autowired
     ClientRepository clientRepository;
 
-    public String addInsurancePolicy(InsurancePolicyRequestDto insurancePolicyRequestDto){
+    public String addInsurancePolicy(InsurancePolicyRequestDto insurancePolicyRequestDto)   throws Exception   {
 
         int clientId = insurancePolicyRequestDto.getClientId();
         Client client = clientRepository.findById(clientId).get();
@@ -44,11 +43,16 @@ public class InsurancePolicyService {
         List<InsurancePolicy> insurancePolicyList = client.getPolicies();
         insurancePolicyList.add(insurancePolicy);
 
+        insurancePolicy = insurancePolicyRepository.save(insurancePolicy);
+
         clientRepository.save(client);
-        return "Policy added successfully";
+
+        if (!(insurancePolicy.getId() > 0)) return "failed create the policy for the client";
+
+        return "Policy created successfully for " + client.getName() + ". Policy Unique Id is " + insurancePolicy.getId() ;
     }
 
-    public PolicyResponseDto getPolicyById(int id){
+    public PolicyResponseDto getPolicyById(int id) throws Exception {
         InsurancePolicy insurancePolicy = insurancePolicyRepository.findById(id).get();
 
         // id | coverage_amount | end_date   | is_policy_claimed
@@ -56,7 +60,7 @@ public class InsurancePolicyService {
 
         PolicyResponseDto policyResponseDto = PolicyResponseDto.builder().id(insurancePolicy.getId())
                 .coverage_amount(insurancePolicy.getCoverage_amount())
-                .endDate(insurancePolicy.getEndDate()).isPolicyClaimed(insurancePolicy.isPolicyClaimed())
+                .endDate(insurancePolicy.getEndDate())
                 .policyNumber(insurancePolicy.getPolicyNumber()).premium(insurancePolicy.getPremium())
                 .startDate(insurancePolicy.getStartDate()).policyType(insurancePolicy.getType()+"")
                 .clientId(insurancePolicy.getClient().getId()).build();
@@ -64,7 +68,7 @@ public class InsurancePolicyService {
         return policyResponseDto;
     }
 
-    public List<PolicyResponseDto> getAllPolicies(){
+    public List<PolicyResponseDto> getAllPolicies() throws Exception    {
 
         List<InsurancePolicy> insurancePolicyList = insurancePolicyRepository.findAll();
         List<PolicyResponseDto> policyResponseList = new ArrayList<>();
@@ -72,7 +76,7 @@ public class InsurancePolicyService {
         for (InsurancePolicy insurancePolicy : insurancePolicyList) {
             PolicyResponseDto policyResponseDto = PolicyResponseDto.builder().id(insurancePolicy.getId())
                     .coverage_amount(insurancePolicy.getCoverage_amount())
-                    .endDate(insurancePolicy.getEndDate()).isPolicyClaimed(insurancePolicy.isPolicyClaimed())
+                    .endDate(insurancePolicy.getEndDate())
                     .policyNumber(insurancePolicy.getPolicyNumber()).premium(insurancePolicy.getPremium())
                     .startDate(insurancePolicy.getStartDate()).policyType(insurancePolicy.getType()+"")
                     .clientId(insurancePolicy.getClient().getId()).build();
@@ -82,16 +86,15 @@ public class InsurancePolicyService {
         return policyResponseList;
     }
 
-    public String deletePolicy(int id) {
+    public String deletePolicy(int id) throws Exception {
         InsurancePolicy insurancePolicy = insurancePolicyRepository.findById(id).get();
         insurancePolicyRepository.delete(insurancePolicy);
         return "policy deleted successfully";
     }
 
     @Transactional
-    public String updatePolicy(UpdatePolicyDto updatePolicyDto) {
-//        UPDATE policies SET coverage_amount=:amount, end_date:endDate,
-//                premium=:premium, start_date=:startDate, type=:insuranceType WHERE id=:policyId;
+    public String updatePolicy(UpdatePolicyDto updatePolicyDto) throws Exception    {
+
         double amount = updatePolicyDto.getCoverageAmount();
         LocalDate endDate = updatePolicyDto.getEndDate();
         LocalDate startDate = updatePolicyDto.getStartDate();

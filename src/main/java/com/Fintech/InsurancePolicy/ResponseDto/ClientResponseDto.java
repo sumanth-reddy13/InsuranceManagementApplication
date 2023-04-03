@@ -11,7 +11,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetAllClientsResponseDto {
+public class ClientResponseDto {
+    int clientId;
     String name;
     LocalDate dateOfBirth;
     String address;

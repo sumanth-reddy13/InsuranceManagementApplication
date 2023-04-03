@@ -13,7 +13,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
 
     @Modifying
     @Query(value = "UPDATE clients SET name=:name, address=:address, contact_info=:mobile, " +
-            "date_of_birth=:dateOfBirth WHERE id=:id", nativeQuery = true)
-    public int updateClient(int id, String name, String mobile, String address, LocalDate dateOfBirth);
+            "date_of_birth=:dateOfBirth, email=:email WHERE id=:id", nativeQuery = true)
+    public int updateClient(int id, String name, String mobile, String address, LocalDate dateOfBirth, String email);
 
 }

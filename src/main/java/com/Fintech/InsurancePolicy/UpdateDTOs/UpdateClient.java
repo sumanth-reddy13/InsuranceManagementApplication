@@ -15,5 +15,6 @@ public class UpdateClient {
     private LocalDate dateOfBirth;
     private String contactInfo;
     private String address;
+    private String email;
 }
 

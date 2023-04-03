@@ -5,4 +5,5 @@ public enum PolicyType {
     AUTO_INSURANCE,
     LIFE_INSURANCE,
     PROPERTY_INSURANCE
+
 }

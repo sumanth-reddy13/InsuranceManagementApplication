@@ -1,7 +1,6 @@
 package com.Fintech.InsurancePolicy.Controllers;
 
-import com.Fintech.InsurancePolicy.DTOs.InsurancePolicyRequestDto;
-import com.Fintech.InsurancePolicy.Models.InsurancePolicy;
+import com.Fintech.InsurancePolicy.RequestDTOs.InsurancePolicyRequestDto;
 import com.Fintech.InsurancePolicy.ResponseDto.PolicyResponseDto;
 import com.Fintech.InsurancePolicy.Services.InsurancePolicyService;
 import com.Fintech.InsurancePolicy.UpdateDTOs.UpdatePolicyDto;
@@ -13,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/InsurancePolicy")
 public class InsurancePolicyController {
 
     @Autowired
     InsurancePolicyService insurancePolicyService;
 
-    @PostMapping("/policies")
+    @PostMapping("/addPolicy")
     public ResponseEntity<String> addInsurancePolicy(@RequestBody InsurancePolicyRequestDto insurancePolicyRequestDto) {
         String response = "";
         try {
@@ -32,22 +31,32 @@ public class InsurancePolicyController {
     }
 
     //API to fetch policy by id.
-    @GetMapping("/policies/{id}")
+    @GetMapping("/getPolicy/{id}")
     public ResponseEntity<PolicyResponseDto> getPolicyById(@PathVariable int id) {
-        PolicyResponseDto policyResponseDto = insurancePolicyService.getPolicyById(id);
-        return new ResponseEntity<>(policyResponseDto, HttpStatus.ACCEPTED);
+        try {
+            PolicyResponseDto policyResponseDto = insurancePolicyService.getPolicyById(id);
+            return new ResponseEntity<>(policyResponseDto, HttpStatus.ACCEPTED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
 
     //Api to fetch all policies
     @GetMapping("/get_all_policies")
     public ResponseEntity<List<PolicyResponseDto>> getAllPolicies() {
-        List<PolicyResponseDto> policyResponseDtos = insurancePolicyService.getAllPolicies();
-        return new ResponseEntity<>(policyResponseDtos, HttpStatus.ACCEPTED);
+        try {
+            List<PolicyResponseDto> policyResponseDtos = insurancePolicyService.getAllPolicies();
+            return new ResponseEntity<>(policyResponseDtos, HttpStatus.ACCEPTED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     //API to delete a policy by id
-    @DeleteMapping("/policies/{id}")
+    @DeleteMapping("/deletePolicy/{id}")
     public ResponseEntity<String> deletePolicy(@PathVariable int id) {
         try {
             String response = insurancePolicyService.deletePolicy(id);

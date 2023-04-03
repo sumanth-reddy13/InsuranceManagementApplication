@@ -17,7 +17,6 @@ public class PolicyResponseDto {
     private double coverage_amount;
     private LocalDate endDate;
     private LocalDate startDate;
-    boolean isPolicyClaimed;
     private String policyNumber;
     private double premium;
     private String policyType;
