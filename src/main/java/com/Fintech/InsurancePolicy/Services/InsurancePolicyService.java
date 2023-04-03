@@ -1,5 +1,7 @@
 package com.Fintech.InsurancePolicy.Services;
 
+import com.Fintech.InsurancePolicy.Converters.InsurancePolicyToResponseDto;
+import com.Fintech.InsurancePolicy.Converters.RequestDtoToInsurancePolicyEntity;
 import com.Fintech.InsurancePolicy.RequestDTOs.InsurancePolicyRequestDto;
 import com.Fintech.InsurancePolicy.Models.Client;
 import com.Fintech.InsurancePolicy.Models.InsurancePolicy;
@@ -29,19 +31,14 @@ public class InsurancePolicyService {
         int clientId = insurancePolicyRequestDto.getClientId();
         Client client = clientRepository.findById(clientId).get();
 
-        InsurancePolicy insurancePolicy = new InsurancePolicy();
-        insurancePolicy.setPolicyNumber(insurancePolicyRequestDto.getPolicyNumber());
-        insurancePolicy.setType(insurancePolicyRequestDto.getType());
-        insurancePolicy.setPremium(insurancePolicyRequestDto.getPremium());
-        insurancePolicy.setCoverage_amount(insurancePolicyRequestDto.getCoverage_amount());
-        insurancePolicy.setStartDate(insurancePolicyRequestDto.getStartDate());
-        insurancePolicy.setEndDate(insurancePolicyRequestDto.getEndDate());
+        // Converter to convert from DTO to Entity.
+        InsurancePolicy insurancePolicy = RequestDtoToInsurancePolicyEntity.requestDtoToPolicyEntity(insurancePolicyRequestDto);
 
         //setting foreign key
         insurancePolicy.setClient(client);
 
-        List<InsurancePolicy> insurancePolicyList = client.getPolicies();
-        insurancePolicyList.add(insurancePolicy);
+        // Adding the policy to the list of client's policies.
+        client.getPolicies().add(insurancePolicy);
 
         insurancePolicy = insurancePolicyRepository.save(insurancePolicy);
 
@@ -55,15 +52,8 @@ public class InsurancePolicyService {
     public PolicyResponseDto getPolicyById(int id) throws Exception {
         InsurancePolicy insurancePolicy = insurancePolicyRepository.findById(id).get();
 
-        // id | coverage_amount | end_date   | is_policy_claimed
-        // | policy_number | premium | start_date | type           | client_id |
-
-        PolicyResponseDto policyResponseDto = PolicyResponseDto.builder().id(insurancePolicy.getId())
-                .coverage_amount(insurancePolicy.getCoverage_amount())
-                .endDate(insurancePolicy.getEndDate())
-                .policyNumber(insurancePolicy.getPolicyNumber()).premium(insurancePolicy.getPremium())
-                .startDate(insurancePolicy.getStartDate()).policyType(insurancePolicy.getType()+"")
-                .clientId(insurancePolicy.getClient().getId()).build();
+        // Converter
+        PolicyResponseDto policyResponseDto = InsurancePolicyToResponseDto.policyToResponseDto(insurancePolicy);
 
         return policyResponseDto;
     }
@@ -74,21 +64,21 @@ public class InsurancePolicyService {
         List<PolicyResponseDto> policyResponseList = new ArrayList<>();
 
         for (InsurancePolicy insurancePolicy : insurancePolicyList) {
-            PolicyResponseDto policyResponseDto = PolicyResponseDto.builder().id(insurancePolicy.getId())
-                    .coverage_amount(insurancePolicy.getCoverage_amount())
-                    .endDate(insurancePolicy.getEndDate())
-                    .policyNumber(insurancePolicy.getPolicyNumber()).premium(insurancePolicy.getPremium())
-                    .startDate(insurancePolicy.getStartDate()).policyType(insurancePolicy.getType()+"")
-                    .clientId(insurancePolicy.getClient().getId()).build();
+
+            // Converter
+            PolicyResponseDto policyResponseDto = InsurancePolicyToResponseDto.policyToResponseDto(insurancePolicy);
 
             policyResponseList.add(policyResponseDto);
         }
+
         return policyResponseList;
     }
 
     public String deletePolicy(int id) throws Exception {
+
         InsurancePolicy insurancePolicy = insurancePolicyRepository.findById(id).get();
         insurancePolicyRepository.delete(insurancePolicy);
+
         return "policy deleted successfully";
     }
 
